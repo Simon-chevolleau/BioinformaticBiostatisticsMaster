@@ -1,17 +1,17 @@
-#Définissez un répertoire de travail « C:/RTravail/RetinolM1 (commande 
+#DÃ©finissez un rÃ©pertoire de travail Â« C:/RTravail/RetinolM1 (commande 
 getwd()
 setwd("C:/RTravail/RetinolM1")
 getwd()
 
-#Chargez les packages nécessaires (prettyR, car)
+#Chargez les packages nÃ©cessaires (prettyR, car)
 library(prettyR)
 library(car)
 
-#Importez les 3 fichiers de données constituant la base : importez le fichier 
-#« M1BB_TPDataMag_DataECF.csv » dans un objet nommé « dataecf » ; 
-#importez le fichier « M1BB_TPDataMag_DataECM.csv » dans un objet nommé 
-#« dataecm » ; importez le fichier « M1BB_TPDataMag_DataPlamsaAll.csv » 
-#dans un objet nommé « dataplasma ».
+#Importez les 3 fichiers de donnÃ©es constituant la base : importez le fichier 
+#Â« M1BB_TPDataMag_DataECF.csv Â» dans un objet nommÃ© Â« dataecf Â» ; 
+#importez le fichier Â« M1BB_TPDataMag_DataECM.csv Â» dans un objet nommÃ© 
+#Â« dataecm Â» ; importez le fichier Â« M1BB_TPDataMag_DataPlamsaAll.csv Â» 
+#dans un objet nommÃ© Â« dataplasma Â».
 
 dataecf <- read.csv2("M1BB_TPDataMag_DataECF.csv", header=TRUE)
 head(dataecf)
@@ -20,41 +20,41 @@ head(dataecm)
 dataplasma <- read.csv2("M1BB_TPDataMag_DataPlasmaAll.csv", header=TRUE)
 head(dataplasma)
 
-#Réalisez la fusion en lignes des objets « dataecf » et « dataecm » dans un nouvel 
-#objet nommé « dataecall »
+#RÃ©alisez la fusion en lignes des objets Â« dataecf Â» et Â« dataecm Â» dans un nouvel 
+#objet nommÃ© Â« dataecall Â»
 dataecall <- rbind(dataecf, dataecm)
 head(dataecall)
 
-#Vérifiez que votre objet « dataecall » contient bien 314 lignes et 14 colonnes, si 
+#VÃ©rifiez que votre objet Â« dataecall Â» contient bien 314 lignes et 14 colonnes, si 
 #ca n'est pas le cas vous avez mal fait la fusion, reprenez alors la fusion
 dim(dataecall)
 
-#Réalisez la fusion en colonnes de « dataecall » et de « dataplasma » dans un 
-#nouvel objet « dataall » 
+#RÃ©alisez la fusion en colonnes de Â« dataecall Â» et de Â« dataplasma Â» dans un 
+#nouvel objet Â« dataall Â» 
 dataall <- merge(dataecall, dataplasma, by="id")
 
-#Effectuez une description rapide des modalités des variables catégorielles et des 
+#Effectuez une description rapide des modalitÃ©s des variables catÃ©gorielles et des 
 #valeurs minimum et maximum des variables quantitatives
 tmpDataall <- dataall[,sapply(dataall,is.numeric)] 
 describe(tmpDataall)
 str(dataall)
 sapply(dataall, summary, na.rm=TRUE) 
 
-#Sexe : des erreurs de saisie semblent s'être glissées dans le fichier : il existe une 
-#modalité « 2 » pour le sexe, après discussion avec l'équipe responsable du projet, 
+#Sexe : des erreurs de saisie semblent s'Ãªtre glissÃ©es dans le fichier : il existe une 
+#modalitÃ© Â« 2 Â» pour le sexe, aprÃ¨s discussion avec l'Ã©quipe responsable du projet, 
 #vous apprenez que cela provient d'un ancien accord sur le codage ou 2 
 #correspondait initialement aux femmes. Recodez correctement les 2 dans la 
-#bonne modalité. Reportez dans votre fichier de report les id des sujets pour 
-#lesquels vous avez dû effectuer la correction et le code utilisé
+#bonne modalitÃ©. Reportez dans votre fichier de report les id des sujets pour 
+#lesquels vous avez dÃ» effectuer la correction et le code utilisÃ©
 dataall[dataall$sexe==2, "id"]
 dataall$sexe <- recode(dataall$sexe, "2=1")
 
-#Bmi : vous constatez des valeurs à 3 chiffres maximales aberrantes. Après 
-#discussion, il s'agit d'une erreur de saisie, le « 1 » des centaines est en trop, mais 
+#Bmi : vous constatez des valeurs Ã  3 chiffres maximales aberrantes. AprÃ¨s 
+#discussion, il s'agit d'une erreur de saisie, le Â« 1 Â» des centaines est en trop, mais 
 #le reste de la valeur est correct. Recodez correctement les valeurs aberrantes. 
-#Reportez dans votre fichier de report les id de sujets pour lesquels vous avez dû 
+#Reportez dans votre fichier de report les id de sujets pour lesquels vous avez dÃ» 
 #effectuer la correction, la valeur initiale (aberrante) et finale (correcte) et le code 
-#utilisé
+#utilisÃ©
 
 bar <- subset(dataall, dataall$bmi>=100)
 bar$id
@@ -64,39 +64,39 @@ bar
 dataall$bmi[29] <- bar$bmi[1] #Change le bmi pour id 29
 dataall$bmi[191] <- bar$bmi[2] #change le bmi pour id 191
 
-#Renommez « beta1 » en « betadiet », « ret1 » en « retdiet », 
-#« beta2 » en « betaplasma » et « ret2 » en « retplasma ». Indiquez dans votre 
-#fichier de report de résultat le code utilisé
+#Renommez Â« beta1 Â» en Â« betadiet Â», Â« ret1 Â» en Â« retdiet Â», 
+#Â« beta2 Â» en Â« betaplasma Â» et Â« ret2 Â» en Â« retplasma Â». Indiquez dans votre 
+#fichier de report de rÃ©sultat le code utilisÃ©
 names(dataall)[13] <- "betadiet"
 names(dataall)[14] <- "retdiet"
 names(dataall)[15] <- "betaplasma"
 names(dataall)[16] <- "retplasma"
 
-#Renommez « beta1 » en « betadiet », « ret1 » en « retdiet », 
-#« beta2 » en « betaplasma » et « ret2 » en « retplasma ». Indiquez dans votre 
-#fichier de report de résultat le code utilisé
+#Renommez Â« beta1 Â» en Â« betadiet Â», Â« ret1 Â» en Â« retdiet Â», 
+#Â« beta2 Â» en Â« betaplasma Â» et Â« ret2 Â» en Â« retplasma Â». Indiquez dans votre 
+#fichier de report de rÃ©sultat le code utilisÃ©
 
 dataall$age <- as.numeric(difftime(as.Date(dataall$ddp, format="%d/%m/%Y"), as.Date(dataall$ddn, format="%d/%m/%Y"), units="days")/365.25)
 
-#Créez une variable BMI en catégories « bmicat » à partir de la variable « bmi » 
-#quantitative. Le codage doit être le suivant : 0 = < 18,5 ; 1 entre 18,5 et 25 exclu, 
-#2 entre 25 et 30 exclu, 3 à partir de 30 et plus
+#CrÃ©ez une variable BMI en catÃ©gories Â« bmicat Â» Ã  partir de la variable Â« bmi Â» 
+#quantitative. Le codage doit Ãªtre le suivant : 0 = < 18,5 ; 1 entre 18,5 et 25 exclu, 
+#2 entre 25 et 30 exclu, 3 Ã  partir de 30 et plus
 dataall$bmicat <- recode(dataall$bmi, "0:18.49999=0 ; 18.5:24.99999=1 ; 25:29.99999=2 ; 30:99=3")
 
-#Créez une variable BMI en catégories « bmicat » à partir de la variable « bmi » 
-#quantitative. Le codage doit être le suivant : 0 = < 18,5 ; 1 entre 18,5 et 25 exclu, 
-#2 entre 25 et 30 exclu, 3 à partir de 30 et plus
+#CrÃ©ez une variable BMI en catÃ©gories Â« bmicat Â» Ã  partir de la variable Â« bmi Â» 
+#quantitative. Le codage doit Ãªtre le suivant : 0 = < 18,5 ; 1 entre 18,5 et 25 exclu, 
+#2 entre 25 et 30 exclu, 3 Ã  partir de 30 et plus
 mean(dataall$retplasma) # = 603.7006
 dataall$retplasmabin <- ifelse(dataall$retplasma < mean(dataall$retplasma), 0, 1)
 
-#A partir de l'objet « dataall », créez un fichier csv 
-#« M1BB_TPDataMag_BaseGelee.csv » qui sauvegardera en dur une base de 
-#données prête à être analysée ; utilisez les options : quote=FALSE, 
-#row.names=FALSE, na="" (pour que les données manquantes soient bien 
-#codées par des espaces vides dans le fichier csv)
+#A partir de l'objet Â« dataall Â», crÃ©ez un fichier csv 
+#Â« M1BB_TPDataMag_BaseGelee.csv Â» qui sauvegardera en dur une base de 
+#donnÃ©es prÃªte Ã  Ãªtre analysÃ©e ; utilisez les options : quote=FALSE, 
+#row.names=FALSE, na="" (pour que les donnÃ©es manquantes soient bien 
+#codÃ©es par des espaces vides dans le fichier csv)
 write.csv(dataall,"M1BB_TPDataMag_BaseGelee.csv", quote=FALSE, row.names=FALSE, na="")
 
-#Définissez les fonctions nécessaires à l'analyse des données (Quartile25, 
+#DÃ©finissez les fonctions nÃ©cessaires Ã  l'analyse des donnÃ©es (Quartile25, 
 #Quartile75, SommeNa, Sumfunct)
 Quartile25 <- function(x, na.rm=TRUE) {
   if(na.rm) x <- x[!is.na(x)]
@@ -121,11 +121,11 @@ Sumfunct <- function(x) {
     SommeNA=SommeNa(x))
 }
 
-#Importez le fichier « M1BB_TPDataMag_BaseGelee.csv » dans un objet 
-#nommé « donnees »
+#Importez le fichier Â« M1BB_TPDataMag_BaseGelee.csv Â» dans un objet 
+#nommÃ© Â« donnees Â»
 donnees <- read.csv("M1BB_TPDataMag_BaseGelee.csv", sep=",", dec=".")
 head(donnees)
-#Définissez correctement la typologie des variables de la base (factor, numeric, 
+#DÃ©finissez correctement la typologie des variables de la base (factor, numeric, 
 #Date)
 donnees$sexe <- as.factor(donnees$sexe)
 donnees$tabac <- as.factor(donnees$tabac)
@@ -138,57 +138,57 @@ donnees$ddn <- as.Date(donnees$ddn, format="%Y-%m-%d")
 donnees$ddp <- as.Date(donnees$ddp, format="%Y-%m-%d")
 str(donnees)
 
-#Réalisez l'analyse descriptive des variables quantitatives de la base et reportez 
-#les résultats dans le fichier de report de résultats
+#RÃ©alisez l'analyse descriptive des variables quantitatives de la base et reportez 
+#les rÃ©sultats dans le fichier de report de rÃ©sultats
 Sumfunct(donnees$age)
-#Moyenne : 50.56200, Ecart-type : 14.57200, 25Q : 39.46064, MÃ©diane : 47.99580, 75Q : 62.72895, Min : 19.40041, Max : 83.66324, NA : 0
+#Moyenne : 50.56200, Ecart-type : 14.57200, 25Q : 39.46064, MÃƒÂ©diane : 47.99580, 75Q : 62.72895, Min : 19.40041, Max : 83.66324, NA : 0
 
 Sumfunct(donnees$bmi)
-#Moyenne : 26.16600, Ecart-type : 6.02100, 25Q : 21.79413, MÃ©diane : 24.73935, 75Q : 28.90161, Min : 16.33114, Max : 50.40333, NA : 0
+#Moyenne : 26.16600, Ecart-type : 6.02100, 25Q : 21.79413, MÃƒÂ©diane : 24.73935, 75Q : 28.90161, Min : 16.33114, Max : 50.40333, NA : 0
 
 Sumfunct(donnees$calories)
-#Moyenne : 1781.159, Ecart-type : 623.279, 25Q : 1335.900, MÃ©diane : 1665.050, 75Q : 2092.525, Min : 445.200, Max : 4373.600, NA : 0
+#Moyenne : 1781.159, Ecart-type : 623.279, 25Q : 1335.900, MÃƒÂ©diane : 1665.050, 75Q : 2092.525, Min : 445.200, Max : 4373.600, NA : 0
 
 Sumfunct(donnees$graisses)
-#Moyenne : 76.755, Ecart-type : 33.521, 25Q : 53.925, MÃ©diane : 72.900, 75Q : 95.175, Min : 14.400, Max : 235.900, NA : 0
+#Moyenne : 76.755, Ecart-type : 33.521, 25Q : 53.925, MÃƒÂ©diane : 72.900, 75Q : 95.175, Min : 14.400, Max : 235.900, NA : 0
 
 Sumfunct(donnees$fibres)
-#Moyenne : 12.793, Ecart-type : 5.338, 25Q : 9.125, MÃ©diane : 12.100, 75Q : 15.600, Min : 3.100, Max : 36.800, NA : 0
+#Moyenne : 12.793, Ecart-type : 5.338, 25Q : 9.125, MÃƒÂ©diane : 12.100, 75Q : 15.600, Min : 3.100, Max : 36.800, NA : 0
 
 Sumfunct(donnees$alcool)
-#Moyenne : 2.643, Ecart-type : 4.949, 25Q : 0, MÃ©diane : 0.300, 75Q : 3.200, Min : 0, Max : 35, NA : 0
+#Moyenne : 2.643, Ecart-type : 4.949, 25Q : 0, MÃƒÂ©diane : 0.300, 75Q : 3.200, Min : 0, Max : 35, NA : 0
 
 Sumfunct(donnees$cholesterol)
-#Moyenne : 242.312, Ecart-type : 130.617, 25Q : 154.950, MÃ©diane : 206.200, 75Q : 308.225, Min : 37.700, Max : 900.700, NA : 0
+#Moyenne : 242.312, Ecart-type : 130.617, 25Q : 154.950, MÃƒÂ©diane : 206.200, 75Q : 308.225, Min : 37.700, Max : 900.700, NA : 0
 
 Sumfunct(donnees$betadiet)
-#Moyenne : 2183.350, Ecart-type : 1475.696, 25Q : 1115.00, MÃ©diane : 1795.00, 75Q : 2803.500, Min : 214.00, Max : 9642.00, NA : 0
+#Moyenne : 2183.350, Ecart-type : 1475.696, 25Q : 1115.00, MÃƒÂ©diane : 1795.00, 75Q : 2803.500, Min : 214.00, Max : 9642.00, NA : 0
 
 Sumfunct(donnees$retdiet)
-#Moyenne : 831.022, Ecart-type : 589.463, 25Q : 479.500, MÃ©diane : 707.000, 75Q : 1026.750, Min : 30.00, Max : 6901.00, NA : 0
+#Moyenne : 831.022, Ecart-type : 589.463, 25Q : 479.500, MÃƒÂ©diane : 707.000, 75Q : 1026.750, Min : 30.00, Max : 6901.00, NA : 0
 
 Sumfunct(donnees$betaplasma)
-#Moyenne : 190.191, Ecart-type : 183.216, 25Q : 89.500, MÃ©diane : 140.00, 75Q : 230.500, Min : 0, Max : 1415.00, NA : 0
+#Moyenne : 190.191, Ecart-type : 183.216, 25Q : 89.500, MÃƒÂ©diane : 140.00, 75Q : 230.500, Min : 0, Max : 1415.00, NA : 0
 
 Sumfunct(donnees$retplasma)
-#Moyenne : 603.701, Ecart-type : 208.602, 25Q : 467.00, MÃ©diane : 566.00, 75Q : 717.500, Min : 179.00, Max : 1727.00, NA : 0
+#Moyenne : 603.701, Ecart-type : 208.602, 25Q : 467.00, MÃƒÂ©diane : 566.00, 75Q : 717.500, Min : 179.00, Max : 1727.00, NA : 0
 
-#Faîtes l'histogramme de la variable bmi de l'ensemble de l'échantillon et 
-#reportez le graphique dans le fichier de report de résultats
+#FaÃ®tes l'histogramme de la variable bmi de l'ensemble de l'Ã©chantillon et 
+#reportez le graphique dans le fichier de report de rÃ©sultats
 hist(donnees$bmi, 
-     main="Histogramme de l'IMC des sujets de l'Ã©chantillon", 
+     main="Histogramme de l'IMC des sujets de l'ÃƒÂ©chantillon", 
      xlab="IMC", 
      xlim=c(10,60),
      ylab="Sujets", 
      las=1,
      col="grey")
 
-#Réalisez l'analyse descriptive des variables catégorielles de la base et reportez 
-#les résultats dans le fichier de report de résultats (Attention : pour chaque 
-#variable, le pourcentage estimé dans chaque catégorie doit être rapportée à 
-#l'effectif disponible (sans données manquantes) et non au total de l'échantillon. 
-#Le pourcentage de données manquantes doit lui bien évidemment être rapporté 
-#au total de l'échantillon)
+#RÃ©alisez l'analyse descriptive des variables catÃ©gorielles de la base et reportez 
+#les rÃ©sultats dans le fichier de report de rÃ©sultats (Attention : pour chaque 
+#variable, le pourcentage estimÃ© dans chaque catÃ©gorie doit Ãªtre rapportÃ©e Ã  
+#l'effectif disponible (sans donnÃ©es manquantes) et non au total de l'Ã©chantillon. 
+#Le pourcentage de donnÃ©es manquantes doit lui bien Ã©videmment Ãªtre rapportÃ© 
+#au total de l'Ã©chantillon)
 test <- table(donnees$sexe, useNA="always") # 0: 41, 1: 273
 test
 prop.table(test) # 0: 13%, 1: 87%
@@ -210,10 +210,10 @@ test
 prop.table(test) # 0: 58%, 1: 42%
 
 
-#Faîtes le diagramme en bâtons (barplot) de la variable « vitamine »
+#FaÃ®tes le diagramme en bÃ¢tons (barplot) de la variable Â« vitamine Â»
 barplot(table(donnees$vitamine), 
-        main= "Consommation de supplÃ©ments vitaminique", 
-        xlab="Habitude d'utilisation des supplÃ©ments", 
+        main= "Consommation de supplÃƒÂ©ments vitaminique", 
+        xlab="Habitude d'utilisation des supplÃƒÂ©ments", 
         ylab="Sujets", 
         ylim=c(0,125), 
         las=1,
@@ -221,11 +221,11 @@ barplot(table(donnees$vitamine),
         col=c("white", "grey", "black"),
 )
 
-#Réalisez l'analyse statistique de comparaison des variables quantitatives et 
-#catégorielles selon la variable binaire « retplasmabin ». Réalisez les tests 
-#statistiques appropriés pour comparer la moyenne des variables quantitatives 
-#selon le groupe (en dessous ou au-dessus de la moyenne de rétinol plasmatique), 
-#catégorielles selon le groupe
+#RÃ©alisez l'analyse statistique de comparaison des variables quantitatives et 
+#catÃ©gorielles selon la variable binaire Â« retplasmabin Â». RÃ©alisez les tests 
+#statistiques appropriÃ©s pour comparer la moyenne des variables quantitatives 
+#selon le groupe (en dessous ou au-dessus de la moyenne de rÃ©tinol plasmatique), 
+#catÃ©gorielles selon le groupe
 head(donnees)
 nums <- unlist(lapply(donnees, is.numeric))  
 nums
@@ -244,7 +244,7 @@ newpi <- function(x) {
 result <- apply(num1[,-13], 2, newpi)
 result
 
-#5. RÃ©alisez lâ€™analyse statistique de comparaison des variables quantitatives et catÃ©gorielles selon la variable binaire Â« retplasmabin Â».
+#5. RÃƒÂ©alisez lÃ¢Â€Â™analyse statistique de comparaison des variables quantitatives et catÃƒÂ©gorielles selon la variable binaire Ã‚Â« retplasmabin Ã‚Â».
 ret1 <- data.frame(donnees[donnees$retplasmabin == "1", ])
 ret0 <- data.frame(donnees[donnees$retplasmabin == "0", ])
 #Variables quantitatives
@@ -338,18 +338,18 @@ tableau = matrix(c(bmi0, bmi1, bmi2, bmi3),4,2,byrow=T)
 khi_test = chisq.test(tableau)
 khi_test
 
-#En sélectionnant les variables associées à une forte concentration de rétinol 
-#plasmatique (au-dessus de la moyenne) à un seuil alpha = 0,10 (selon les 
-#résultats des tests statistiques précédents), fittez le modèle de régression 
-#logistique expliquant la variable « retplasmabin » (n'utilisez, si besoin, que la 
-#variable BMI catégrielle). Récupérez les coefficients, Odds-Ratio et Intervalles 
-#de Confiance des OR et reportez le dans le fichier de report de résultats
+#En sÃ©lectionnant les variables associÃ©es Ã  une forte concentration de rÃ©tinol 
+#plasmatique (au-dessus de la moyenne) Ã  un seuil alpha = 0,10 (selon les 
+#rÃ©sultats des tests statistiques prÃ©cÃ©dents), fittez le modÃ¨le de rÃ©gression 
+#logistique expliquant la variable Â« retplasmabin Â» (n'utilisez, si besoin, que la 
+#variable BMI catÃ©grielle). RÃ©cupÃ©rez les coefficients, Odds-Ratio et Intervalles 
+#de Confiance des OR et reportez le dans le fichier de report de rÃ©sultats
 regression <-  glm(formula = retplasmabin ~ sexe + age + alcool,data=donnees, family=binomial)
 summary(regression)
 
-#Au final, au risque alpha = 5%, quels est(sont) le(s) facteur(s) associés à une 
-#concentration de rétinol plasmatique supérieure à la moyenne de l'échantillon ?
-#Exprimer verbalement les résultats de la régression logistique obtenue (force 
-#de(s) associations retrouvée(s), significativité).
+#Au final, au risque alpha = 5%, quels est(sont) le(s) facteur(s) associÃ©s Ã  une 
+#concentration de rÃ©tinol plasmatique supÃ©rieure Ã  la moyenne de l'Ã©chantillon ?
+#Exprimer verbalement les rÃ©sultats de la rÃ©gression logistique obtenue (force 
+#de(s) associations retrouvÃ©e(s), significativitÃ©).
 exp(coefficients(regression)) #OR
 exp(confint(regression)) #Intervalle de confiances
